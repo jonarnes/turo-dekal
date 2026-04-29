@@ -9,20 +9,20 @@ RUN apt-get update \
         unzip \
         libicu-dev \
         libonig-dev \
+        libsqlite3-dev \
         libzip-dev \
+        zlib1g-dev \
         libpng-dev \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j"$(nproc)" \
-        gd \
-        intl \
-        mbstring \
-        pdo_sqlite \
-        sqlite3 \
-        zip
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install -j"$(nproc)" gd
+RUN docker-php-ext-install -j"$(nproc)" intl
+RUN docker-php-ext-install -j"$(nproc)" mbstring
+RUN docker-php-ext-install -j"$(nproc)" pdo_sqlite sqlite3
+RUN docker-php-ext-install -j"$(nproc)" zip
 
 RUN a2enmod rewrite
 
