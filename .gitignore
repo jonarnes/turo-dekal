@@ -1,0 +1,8 @@
+/vendor/
+/storage/app.sqlite
+/storage/uploads/
+/storage/cache/
+.DS_Store
+.env
+.env.local
+.env.*.local
