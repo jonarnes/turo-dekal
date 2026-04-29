@@ -21,7 +21,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install -j"$(nproc)" gd
 RUN docker-php-ext-install -j"$(nproc)" intl
 RUN docker-php-ext-install -j"$(nproc)" mbstring
-RUN docker-php-ext-install -j"$(nproc)" pdo_sqlite sqlite3
 RUN docker-php-ext-install -j"$(nproc)" zip
 
 RUN a2enmod rewrite
