@@ -8,7 +8,7 @@ RUN apt-get update \
         git \
         unzip \
         libicu-dev \
-        libxml2-dev \
+        libonig-dev \
         libzip-dev \
         libpng-dev \
         libjpeg62-turbo-dev \
@@ -17,17 +17,11 @@ RUN apt-get update \
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" \
-        dom \
         gd \
         intl \
         mbstring \
-        pdo \
         pdo_sqlite \
-        simplexml \
         sqlite3 \
-        xml \
-        xmlreader \
-        xmlwriter \
         zip
 
 RUN a2enmod rewrite
