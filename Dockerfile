@@ -4,6 +4,7 @@ WORKDIR /var/www/html
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        $PHPIZE_DEPS \
         git \
         unzip \
         libicu-dev \
@@ -12,8 +13,9 @@ RUN apt-get update \
         libpng-dev \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
-    && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" \
         dom \
         gd \
