@@ -7,6 +7,7 @@ RUN apt-get update \
         git \
         unzip \
         libicu-dev \
+        libxml2-dev \
         libzip-dev \
         libpng-dev \
         libjpeg62-turbo-dev \
@@ -14,12 +15,17 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" \
+        dom \
         gd \
         intl \
         mbstring \
         pdo \
         pdo_sqlite \
+        simplexml \
         sqlite3 \
+        xml \
+        xmlreader \
+        xmlwriter \
         zip
 
 RUN a2enmod rewrite
@@ -31,7 +37,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-progress
 
 COPY . .
 
