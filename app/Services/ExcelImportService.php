@@ -98,7 +98,7 @@ final class ExcelImportService
         $s = strtolower(trim($s));
         return match ($s) {
             'tur' => 'tur',
-            'navn' => 'navn',
+            'navn', 'postnavn' => 'navn',
             'kode' => 'kode',
             'poeng' => 'poeng',
             'qr' => 'qr',

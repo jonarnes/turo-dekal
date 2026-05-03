@@ -192,6 +192,7 @@ body { margin:0; padding:0; font-family: DejaVu Sans, sans-serif; }
         $columnPadding = max(2.0, self::MIN_COLUMN_PADDING_MM);
         $qrSrc = htmlspecialchars($post['_qr_src'], ENT_QUOTES, 'UTF-8');
         $kode = htmlspecialchars($post['kode'], ENT_QUOTES, 'UTF-8');
+        $navn = htmlspecialchars((string) ($post['navn'] ?? ''), ENT_QUOTES, 'UTF-8');
         $tur = htmlspecialchars($post['tur'], ENT_QUOTES, 'UTF-8');
         $bes = htmlspecialchars($post['beskrivelse'], ENT_QUOTES, 'UTF-8');
         $poeng = htmlspecialchars($post['poeng'], ENT_QUOTES, 'UTF-8');
@@ -203,6 +204,7 @@ body { margin:0; padding:0; font-family: DejaVu Sans, sans-serif; }
             . '<div style="font-size:9pt;line-height:1.2;margin-bottom:1.2mm;">Scan med TurO-appen</div>'
             . '<img src="' . $qrSrc . '" style="width:42mm;height:42mm;display:block;margin:0 auto 2mm auto;" alt="QR" />'
             . '<div style="font-size:22pt;font-weight:bold;line-height:1.1;margin:1mm 0;"><span style="font-size:10pt; font-weight:normal;">Kode: </span>' . $kode . '</div>'
+            . ($navn !== '' ? '<div style="font-size:9pt;margin-top:1.2mm;line-height:1.2;color:#333;">Postnavn</div><div style="font-size:12pt;font-weight:bold;line-height:1.2;margin-top:0.3mm;">' . $navn . '</div>' : '')
             . ($tur !== '' ? '<div style="font-size:11pt;margin-top:1mm;line-height:1.2;">' . $tur . '</div>' : '')
             . ($bes !== '' ? '<div style="font-size:9pt;margin-top:1.5mm;line-height:1.25;">' . $bes . '</div>' : '')
             . ($poeng !== '' ? '<div style="font-size:8pt;margin-top:1mm;color:#444;">Poeng: ' . $poeng . '</div>' : '')
