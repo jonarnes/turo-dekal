@@ -28,6 +28,13 @@ final class UploadController
         }
         $pdo = Database::pdo($this->config['base_path']);
         $wizard = (new WizardService())->state($pdo, $userId);
+        
+        // Sjekk om brukeren er admin
+        $st = $pdo->prepare('SELECT is_admin FROM users WHERE id = ?');
+        $st->execute([$userId]);
+        $user = $st->fetch(PDO::FETCH_ASSOC);
+        $isAdmin = !empty($user['is_admin']);
+        
         View::render('upload', [
             'title' => 'Excel-opplasting',
             'urlBase' => $this->urlBase,
@@ -36,6 +43,7 @@ final class UploadController
             'error' => $_SESSION['flash_error'] ?? null,
             'success' => $_SESSION['flash_success'] ?? null,
             'csrf' => Csrf::token(),
+            'isAdmin' => $isAdmin,
         ]);
         unset($_SESSION['flash_error'], $_SESSION['flash_success']);
     }

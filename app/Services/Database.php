@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS users (
   username TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
+  is_admin INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS imports (
@@ -98,6 +99,7 @@ SQL);
         self::ensureColumn($pdo, 'imports', 'user_id INTEGER');
         self::ensureColumn($pdo, 'posts', 'user_id INTEGER');
         self::ensureColumn($pdo, 'layout_assets', 'user_id INTEGER');
+        self::ensureColumn($pdo, 'users', 'is_admin INTEGER NOT NULL DEFAULT 0');
         try {
             $pdo->exec('CREATE INDEX IF NOT EXISTS idx_posts_import ON posts(import_id)');
             $pdo->exec('CREATE INDEX IF NOT EXISTS idx_posts_kode ON posts(kode)');

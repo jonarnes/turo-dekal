@@ -39,6 +39,13 @@ final class HomeController
             $st->execute([$userId, $importId]);
             $posts = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
         }
+        
+        // Sjekk om brukeren er admin
+        $st = $pdo->prepare('SELECT is_admin FROM users WHERE id = ?');
+        $st->execute([$userId]);
+        $user = $st->fetch(PDO::FETCH_ASSOC);
+        $isAdmin = !empty($user['is_admin']);
+        
         View::render('home', [
             'title' => 'Turo-dekal',
             'urlBase' => $this->urlBase,
@@ -47,6 +54,7 @@ final class HomeController
             'postCount' => $count,
             'hasImport' => $importId !== null,
             'posts' => $posts,
+            'isAdmin' => $isAdmin,
         ]);
     }
 }

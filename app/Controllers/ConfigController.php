@@ -50,6 +50,13 @@ final class ConfigController
             3 => $settings->get($pdo, 'column_text_3', '', $userId) ?? '',
         ];
         $columnLayouts = $this->columnLayouts($pdo, $userId, $assets);
+        
+        // Sjekk om brukeren er admin
+        $st = $pdo->prepare('SELECT is_admin FROM users WHERE id = ?');
+        $st->execute([$userId]);
+        $user = $st->fetch(PDO::FETCH_ASSOC);
+        $isAdmin = !empty($user['is_admin']);
+        
         View::render('config', [
             'title' => 'Konfigurasjon',
             'urlBase' => $this->urlBase,
@@ -62,6 +69,7 @@ final class ConfigController
             'error' => $_SESSION['flash_error'] ?? null,
             'success' => $_SESSION['flash_success'] ?? null,
             'csrf' => Csrf::token(),
+            'isAdmin' => $isAdmin,
         ]);
         unset($_SESSION['flash_error'], $_SESSION['flash_success']);
     }

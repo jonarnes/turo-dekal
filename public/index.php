@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Controllers\AdminController;
 use App\Controllers\ConfigController;
 use App\Controllers\HomeController;
 use App\Controllers\LayoutImageController;
@@ -135,6 +136,10 @@ switch ($route) {
 
     case 'pdf':
         (new PdfController($config))->download();
+        break;
+
+    case 'admin':
+        (new AdminController($config, $urlBase))->index();
         break;
 
     case 'home':

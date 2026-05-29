@@ -15,6 +15,7 @@ RUN apt-get update \
         libpng-dev \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
+        sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
@@ -38,6 +39,10 @@ RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoload
 COPY . .
 
 RUN mkdir -p storage/uploads/excel storage/uploads/images storage/cache/qr \
-    && chown -R www-data:www-data storage
+    && chown -R www-data:www-data storage \
+    && chmod -R 775 storage
+
+# Legg til alias for enklere database-tilgang
+RUN echo "alias db='sqlite3 /var/www/html/storage/app.sqlite'" >> /etc/bash.bashrc
 
 EXPOSE 80

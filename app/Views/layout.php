@@ -31,6 +31,9 @@ $loggedIn = !empty($_SESSION['user_id']);
 <header class="site-header">
     <h1 class="brand"><a href="<?= htmlspecialchars($ub, ENT_QUOTES, 'UTF-8') ?>/index.php">Turo-dekal</a></h1>
     <?php if ($loggedIn): ?>
+        <?php if (!empty($isAdmin)): ?>
+            <a class="btn small" href="<?= htmlspecialchars($ub, ENT_QUOTES, 'UTF-8') ?>/index.php?route=admin">Admin</a>
+        <?php endif; ?>
         <a class="btn small" href="<?= htmlspecialchars($ub, ENT_QUOTES, 'UTF-8') ?>/index.php?route=logout">Logg ut</a>
     <?php endif; ?>
 </header>
