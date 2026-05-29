@@ -42,7 +42,13 @@ RUN mkdir -p storage/uploads/excel storage/uploads/images storage/cache/qr \
     && chown -R www-data:www-data storage \
     && chmod -R 775 storage
 
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Legg til alias for enklere database-tilgang
 RUN echo "alias db='sqlite3 /var/www/html/storage/app.sqlite'" >> /etc/bash.bashrc
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
 
 EXPOSE 80
