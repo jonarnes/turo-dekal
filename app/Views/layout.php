@@ -18,6 +18,28 @@ $step1Done = !empty($wizard['step1_done']);
 $step2Done = !empty($wizard['step2_done']);
 $step3Ready = !empty($wizard['step3_ready']);
 $loggedIn = !empty($_SESSION['user_id']);
+
+$nextActionStep = 1;
+if ($step1Done) {
+    $nextActionStep = $step2Done ? 3 : 2;
+}
+
+$wizardTabClass = static function (int $step, int $activeStep, bool $done, bool $locked, int $nextActionStep): string {
+    $c = ['wizard-tab'];
+    if ($activeStep === $step) {
+        $c[] = 'active';
+    }
+    if ($done) {
+        $c[] = 'complete';
+    }
+    if (!$locked && $nextActionStep === $step && !$done && $activeStep !== $step) {
+        $c[] = 'action-needed';
+    }
+    if ($locked) {
+        $c[] = 'locked';
+    }
+    return implode(' ', $c);
+};
 ?>
 <!DOCTYPE html>
 <html lang="no">
@@ -39,41 +61,50 @@ $loggedIn = !empty($_SESSION['user_id']);
 </header>
 <main class="main">
 <?php if ($loggedIn): ?>
-    <section class="wizard-intro">
-        <h1>Fremgangsmåte</h1>
-        <div>
-            <div class="wizard-step">
-                <h3>Steg 1</h3>
-                <p>Gå til idrettenonline og last ned excel-filen med posterene. Filen må inneholde kolonnener for Tur, Navn, Kode, Poeng, QR og Beskrivelse.</p>
-            </div>
-            <div class="wizard-step">
-                <h3>Steg 2</h3>
-                <p>Design dekalen. Last opp logoer og legg til evt. tekst.</p>
-            </div>
-            <div class="wizard-step">
-                <h3>Steg 3</h3>
-                <p>Generer PDF. Velg dekaler og generer PDF for valgte poster. Skriv ut <a style="color: var(--accent);" href="https://www.nortea.no/products/outdoor-selvklebende-folie-10-ark-210x148-hvit-20-stk" target="_blank">dekalene på vannfast papir.</a></p>
-                    <p> Dekalene passer til 48X48 lekter/stolper. Tre sider med bilder, og den bakerste siden er tom.</p> 
-            </div>
-        </div>
-    </section>
     <nav class="wizard-tabs" aria-label="Wizard steg">
-        <a class="wizard-tab<?= $activeStep === 1 ? ' active' : '' ?>" href="<?= htmlspecialchars($ub, ENT_QUOTES, 'UTF-8') ?>/index.php?route=upload">
+        <a class="<?= $wizardTabClass(1, $activeStep, $step1Done, false, $nextActionStep) ?>"
+           data-step-num="1"
+           href="<?= htmlspecialchars($ub, ENT_QUOTES, 'UTF-8') ?>/index.php?route=upload">
             <span class="step">Steg 1</span>
             <span class="label">Last opp Excel</span>
-            <span class="status"><?= $step1Done ? 'Ferdig' : 'Påkrevd' ?></span>
+            <span class="status"><?= $step1Done ? '✓ Ferdig' : ($activeStep === 1 ? '→ Gjør dette nå' : 'Påkrevd') ?></span>
         </a>
-        <a class="wizard-tab<?= $activeStep === 2 ? ' active' : '' ?>" href="<?= htmlspecialchars($ub, ENT_QUOTES, 'UTF-8') ?>/index.php?route=config">
+        <a class="<?= $wizardTabClass(2, $activeStep, $step2Done, !$step1Done, $nextActionStep) ?>"
+           data-step-num="2"
+           href="<?= htmlspecialchars($ub, ENT_QUOTES, 'UTF-8') ?>/index.php?route=config">
             <span class="step">Steg 2</span>
             <span class="label">Design dekaler</span>
-            <span class="status"><?= $step2Done ? 'Ferdig' : 'Påkrevd' ?></span>
+            <span class="status"><?= $step2Done ? '✓ Ferdig' : (!$step1Done ? 'Venter på steg 1' : ($activeStep === 2 ? '→ Gjør dette nå' : 'Påkrevd')) ?></span>
         </a>
-        <a class="wizard-tab<?= $activeStep === 3 ? ' active' : '' ?><?= $step3Ready ? '' : ' pending' ?>" href="<?= htmlspecialchars($ub, ENT_QUOTES, 'UTF-8') ?>/index.php?route=home">
+        <a class="<?= $wizardTabClass(3, $activeStep, false, !$step3Ready, $nextActionStep) ?>"
+           data-step-num="3"
+           href="<?= htmlspecialchars($ub, ENT_QUOTES, 'UTF-8') ?>/index.php?route=home">
             <span class="step">Steg 3</span>
             <span class="label">Generer PDF</span>
-            <span class="status"><?= $step3Ready ? 'Klar' : 'Venter på steg 1-2' ?></span>
+            <span class="status"><?= $step3Ready ? ($activeStep === 3 ? '→ Gjør dette nå' : 'Klar — klikk her') : 'Venter på steg 1–2' ?></span>
         </a>
     </nav>
+
+    <details class="wizard-guide">
+        <summary>
+            Fremgangsmåte
+            <span class="wizard-guide-hint">klikk for detaljer</span>
+        </summary>
+        <div class="wizard-guide-body">
+            <div class="wizard-guide-step">
+                <h3>Steg 1 — Excel</h3>
+                <p>Gå til idrettenonline og last ned excel-filen med posterene. Filen må inneholde kolonnene Tur, Navn, Kode, Poeng, QR og Beskrivelse.</p>
+            </div>
+            <div class="wizard-guide-step">
+                <h3>Steg 2 — Design</h3>
+                <p>Design dekalen. Last opp logoer og legg til evt. tekst.</p>
+            </div>
+            <div class="wizard-guide-step">
+                <h3>Steg 3 — PDF</h3>
+                <p>Velg dekaler og generer PDF. Skriv ut på <a href="https://www.nortea.no/products/outdoor-selvklebende-folie-10-ark-210x148-hvit-20-stk" target="_blank" rel="noopener">vannfast papir</a>. Dekalene passer 48×48 lekter — tre sider med bilder, bakerste side tom.</p>
+            </div>
+        </div>
+    </details>
 <?php endif; ?>
 <?php include $___viewFile; ?>
 </main>
